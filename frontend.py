@@ -26,6 +26,7 @@ class Login_frontend:
     def fenetre(self):
         return self.fen
     def login(self):
+        print(self.username_text.get(),self.mdp_text.get())
         user=Login_back(self.username_text.get(),self.mdp_text.get())
         if user.login():
             showinfo("Factiuration System","Connexion Reussi")
