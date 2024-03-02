@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter.messagebox import showinfo,showerror
 from connexion import ArticleBackend
-
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 class Article_frontend:
     def __init__(self,curseur):
         self.fen=Tk()
@@ -27,20 +28,37 @@ class Article_frontend:
         self.btn_validation.place(x=200,y=150,width=300,height=50)
         self.frame2=Frame(self.fen,height=200,width=760,bg='gray')
         self.frame2.place(x=20,y=400)
-        
+        self.curseur=curseur
         """tableau des articles dans la base de donnees"""
         self.tableau=Listbox(self.frame2)
-        self.tableau.place(x=20,y=20,width=720,height=150)
+        self.tableau.place(x=20,y=20,width=220,height=100)
         self.tableau.insert(0,"Code Article | Designation | Prix")
         self.affiche()
+        self.previsualiser_pdf=Button(self.frame2,text="Previsualiser",bg="lightblue",font="Times 15 bold",command=self.previsualiser)
+
+        self.previsualiser_pdf.place(x=20,y=120,width=100,height=30)
+    def previsualiser(self):
+                     
+            c=canvas.Canvas("articles.pdf",pagesize=letter)
+            c.drawString(100,750,"Liste des articles")
+            c.drawString(100,730,"Code Article | Designation | Prix")
+            article=ArticleBackend("2","2",2)
+            articles=article.all(self.curseur)
+            y=700
+            for art in articles:
+                c.drawString(100,y,art[0]+" | "+art[1]+" | "+str(art[2]))
+                y-=20
+            c.save()
+            showinfo("Previsualisation","Fichier PDF cree avec succes")
+    """vusialisation du fichier pdf des articles"""
+    def visualiser_pdf(self):
+        pass
         
-        self.curseur=curseur
         
-        self.curseur=curseur
-    """affichage dans un tableau tkinter  des articles dans la base de donnees"""
+
     def affiche(self):
         self.tableau.delete(1,END)  
-        article=ArticleBackend()
+        article=ArticleBackend("2","2",2)
         articles=article.all(self.curseur)
         for art in articles:
             self.tableau.insert(END,art[0]+" | "+art[1]+" | "+str(art[2]))
