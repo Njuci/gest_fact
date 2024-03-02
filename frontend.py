@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
 from connexion import Login_back
-from article import Article_frontend
+from article_fr import Article_frontend_Ajout
 class Login_frontend:
     def __init__(self):
         self.fen=Tk()
@@ -30,7 +30,7 @@ class Login_frontend:
         user=Login_back(self.username_text.get(),self.mdp_text.get())
         if user.login():
             showinfo("Factiuration System","Connexion Reussi")
-            fen2=Article_frontend(user.curseur)
+            fen2=Article_frontend_Ajout(user.curseur)
             self.fen.destroy()
             fen2.fenetre().mainloop()
             

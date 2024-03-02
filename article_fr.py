@@ -1,13 +1,27 @@
+import datetime as dt
 from tkinter import *
 from tkinter.messagebox import showinfo,showerror
 from connexion import ArticleBackend
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-class Article_frontend:
+from tkPDFViewer import tkPDFViewer as pdf
+class Article_frontend_Ajout:
     def __init__(self,curseur):
         self.fen=Tk()
         self.fen.title("Articles")
         self.fen.geometry("800x600")
+        self.menu=Menu(self.fen)
+        """menu  Article"""
+
+        self.fichier=Menu(self.menu,tearoff=0)
+        self.fichier.add_command(label="Modifier",command=self.modifier)
+        self.fichier.add_command(label="Supprimer",command=self.delete)
+        self.menu.add_cascade(label="Fichier",menu=self.fichier)
+        self.supprimer_art=Menu(self.menu,tearoff=0)
+        self.menu.add_cascade(label="Quiter",menu=self.fen.quit)    
+        self.fen.config(menu=self.menu)
+        
+        
         self.titre=Label(self.fen,text="Ajout articles",font="Times 35 bold").place(x=290,y=50)
         self.frame1=Frame(self.fen,height=200,width=760,bg='gray')
         self.frame1.place(x=20,y=180)
@@ -29,6 +43,8 @@ class Article_frontend:
         self.frame2=Frame(self.fen,height=200,width=760,bg='gray')
         self.frame2.place(x=20,y=400)
         self.curseur=curseur
+        self.fen2=None
+        self.pr_pdf=None
         """tableau des articles dans la base de donnees"""
         self.tableau=Listbox(self.frame2)
         self.tableau.place(x=20,y=20,width=220,height=100)
@@ -36,23 +52,56 @@ class Article_frontend:
         self.affiche()
         self.previsualiser_pdf=Button(self.frame2,text="Previsualiser",bg="lightblue",font="Times 15 bold",command=self.previsualiser)
 
-        self.previsualiser_pdf.place(x=20,y=120,width=100,height=30)
+        self.previsualiser_pdf.place(x=20,y=140,width=150,height=30)
+        self.visualiser_pdf=Button(self.frame2,text="Visualiser",bg="lightblue",font="Times 15 bold",command=self.visualiser_pdf)
+        self.visualiser_pdf.place(x=180,y=140,width=100,height=30)
     def previsualiser(self):
-                     
-            c=canvas.Canvas("articles.pdf",pagesize=letter)
-            c.drawString(100,750,"Liste des articles")
-            c.drawString(100,730,"Code Article | Designation | Prix")
+            now=dt.datetime.now()      
+            """formatage de la date pour le nom du fichier pdf""" 
+            now2=now.strftime("%Y-%m-%d%H-%M-%S")                   
+            c=canvas.Canvas("articles"+str(now2)+".pdf",pagesize=letter)
+            """entete du fichier pdf et affichage des articles dans la base de donnees"""
+            c.setFillColorRGB(1, 0, 0)  # Red color
+            # Set font size for the title
+            now3=now.strftime("%Y-%m-%d %H:%M:%S")
+            c.setFont("Helvetica-Bold", 22) 
+            # Draw the title text
+            c.drawString(100,700,"Liste des Articles ce "+str(now3))
+            """ """
+
+
+            c.drawString(100,600,"Code Article | Designation | Prix")
             article=ArticleBackend("2","2",2)
             articles=article.all(self.curseur)
-            y=700
+            y=500            
             for art in articles:
-                c.drawString(100,y,art[0]+" | "+art[1]+" | "+str(art[2]))
+                c.setFillColorRGB(0, 0, 0)  # Noir
+                c.setFont("Helvetica-Bold", 16)  # Police standard, taille de police 12
+
+                c.drawString(100,y,art[0]+"   |   "+art[1]+"   |   "+str(art[2]))
                 y-=20
             c.save()
             showinfo("Previsualisation","Fichier PDF cree avec succes")
     """vusialisation du fichier pdf des articles"""
     def visualiser_pdf(self):
-        pass
+        self.fen2=Tk()
+        self.fen2.geometry("800x600")
+        self.fen2.title("Visualisation PDF")
+        self.fen2.configure(bg="lightblue")
+        
+        try:
+            self.pdf=pdf.ShowPdf()
+            try:
+               self.pr_pdf=self.pdf.pdf_view(self.fen2,pdf_location=r"articles.pdf",width=50,height=200) 
+               self.pr_pdf.pack(pady=(0,0))
+            except Exception as e:
+                showerror("Visualisation",str(e))
+                
+                #self.pdf.pdf_view(self.fen2,pdf_location="articles.pdf",width=50,height=200)
+            
+        except Exception as e:
+            showerror("Visualisation",str(e))
+       
         
         
 
@@ -63,7 +112,10 @@ class Article_frontend:
         for art in articles:
             self.tableau.insert(END,art[0]+" | "+art[1]+" | "+str(art[2]))
             
-        
+    def delete(self):
+        pass
+    def modifier(self):
+        pass   
 
     def fenetre(self):
         return self.fen
