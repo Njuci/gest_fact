@@ -1,5 +1,6 @@
 import datetime as dt
 from tkinter import *
+from article_modifier import Article_frontend_Modifier
 from tkinter.messagebox import showinfo,showerror
 from connexion import ArticleBackend
 from reportlab.pdfgen import canvas
@@ -18,7 +19,7 @@ class Article_frontend_Ajout:
         self.fichier.add_command(label="Supprimer",command=self.delete)
         self.menu.add_cascade(label="Fichier",menu=self.fichier)
         self.supprimer_art=Menu(self.menu,tearoff=0)
-        self.menu.add_cascade(label="Quiter",menu=self.fen.quit)    
+        self.menu.add_cascade(label="Quiter",menu=self.fen,command=self.fen.quit)    
         self.fen.config(menu=self.menu)
         
         
@@ -59,7 +60,7 @@ class Article_frontend_Ajout:
             now=dt.datetime.now()      
             """formatage de la date pour le nom du fichier pdf""" 
             now2=now.strftime("%Y-%m-%d%H-%M-%S")                   
-            c=canvas.Canvas("articles"+str(now2)+".pdf",pagesize=letter)
+            c=canvas.Canvas("pdf/articles_dispo/articles"+str(now2)+".pdf",pagesize=letter)
             """entete du fichier pdf et affichage des articles dans la base de donnees"""
             c.setFillColorRGB(1, 0, 0)  # Red color
             # Set font size for the title
@@ -69,7 +70,7 @@ class Article_frontend_Ajout:
             c.drawString(100,700,"Liste des Articles ce "+str(now3))
             """ """
 
-
+    
             c.drawString(100,600,"Code Article | Designation | Prix")
             article=ArticleBackend("2","2",2)
             articles=article.all(self.curseur)
@@ -104,6 +105,11 @@ class Article_frontend_Ajout:
        
         
         
+    def modifier(self):
+        a=Article_frontend_Modifier(self.curseur)
+        self.fen.destroy()
+        a.fenetre().mainloop()
+        
 
     def affiche(self):
         self.tableau.delete(1,END)  
@@ -114,8 +120,7 @@ class Article_frontend_Ajout:
             
     def delete(self):
         pass
-    def modifier(self):
-        pass   
+  
 
     def fenetre(self):
         return self.fen

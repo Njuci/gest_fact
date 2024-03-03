@@ -70,9 +70,9 @@ class ArticleBackend:
         
         
     """modification d'un article dans la base de données"""
-    def update(self,cursor,codArt):
+    def update(self,cursor,element):
         try:
-            cursor.execute("update article set desiArt=%s,prix=%s ; codArt=%s where codArt=%s",(self.designation,self.prix,self.cod,codArt))
+            cursor.execute("update article set desiArt=%s,prix=%s ; codArt=%s where codArt=%s and desiArt=%s and prix=%s ",(self.designation,self.prix,self.cod,element[0],element[1],element[2],))
             return True
         except Exception as e:
             showerror("Modification",str(e))
@@ -80,7 +80,7 @@ class ArticleBackend:
     """suppression d'un article dans la base de données"""  
     def delete(self,cursor):
         try:
-            cursor.execute("delete from article where code=%s",(self.cod,))
+            cursor.execute("delete from article where codArt=%s",(self.cod,))
             return True
         except Exception as e:
             showerror("Suppression",str(e))

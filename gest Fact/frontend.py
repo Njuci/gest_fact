@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
 from connexion import Login_back
-from article_fr import Article_frontend_Ajout
+from ArticleFront import ArticleFrontend
 class Login_frontend:
     def __init__(self):
+        
         self.fen=Tk()
         self.fen.title("Authentification")
         self.fen.geometry("800x600")
@@ -30,7 +31,7 @@ class Login_frontend:
         user=Login_back(self.username_text.get(),self.mdp_text.get())
         if user.login():
             showinfo("Factiuration System","Connexion Reussi")
-            fen2=Article_frontend_Ajout(user.curseur)
+            fen2=ArticleFrontend(user.curseur)
             self.fen.destroy()
             fen2.fenetre().mainloop()
         else:
