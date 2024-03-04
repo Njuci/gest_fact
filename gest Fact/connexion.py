@@ -115,7 +115,7 @@ class FactBackend:
         self.curseur=None
     def save(self,cursor):
         try:
-            cursor.execute("insert into facture values(%s,%s,%s)",(self.IdFac,self.DateFac,self.Reduction,self.IdCli))
+            cursor.execute("insert into facture values(%s,%s,%s,%s)",(self.IdFac,self.DateFac,self.Reduction,self.IdCli))
 
             return True
         except Exception as e:
