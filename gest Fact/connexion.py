@@ -60,11 +60,12 @@ class ArticleBackend:
         
     
     """recherche d'un article dans la base de données"""
-    def search(self,cursor):
+    def search(self,cursor): 
         try:
-            cursor.execute("select * from article where code=%s",(self.cod,))
+            cursor.execute("select * from article where codArt=%s",(self.cod,))
             return cursor.fetchall()
         except Exception as e:
+            print(e)
             showerror("Recherche",str(e))
             return False
         
@@ -95,4 +96,118 @@ class ArticleBackend:
         except Exception as e:
             showerror("Affichage",str(e))
             return False
+
+class PaiementBackend:
+    # create table Paiement(
+    # datepaie date,
+    # idfact varchar(5),
+    # montant float(12,2),
+    # constraint pk_p_fact foreign key(idFact) References Facture(idFact)
+    def __init__(self):
+        self.curseur=None
+    def __init__(self,date:str,idfact:str,montant:float):
+        self.date = date
+        self.idfact = idfact
+        self.montant = montant
+        self.curseur = None
+    """sauvegarde du paiement dans la base de données"""
+    def savePaiement(self,cursor):
+        try:
+            cursor.execute("insert into paiement values(%s,%s,%s)",(self.date,self.idfact,self.montant))
+            return True
+        except Exception as e:
+            showerror("Enregistrement",str(e))
+            return False
+    """recherche d'un paiement dans la base de données"""
+    def searchPaiement(self,cursor):
+        try:
+            cursor.execute("select * from paiement where idfact=%s",(self.idfact,))
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Recherche",str(e))
+            return False
+    """modification d'un paiement dans la base de données"""
+    def updatePaiement(self,cursor,element):
+        try:
+            # update paiement where idFact and date = %s only
+            cursor.execute("update paiement set montant=%s where idFact=%s and datepaie=%s",(self.montant,self.idfact,self.date))
+            return True
+        except Exception as e:
+            showerror("Modification",str(e))
+            return False
+    """suppression d'un paiement dans la base de données"""
+    def deletePaiement(self,cursor):
+        try:
+            # delete from paiement where idFact and date = %s and montant = %s
+            cursor.execute("delete from paiement where idFact=%s and datepaie=%s",(self.idfact,self.date))
+            return True
+        except Exception as e:
+            showerror("Suppression",str(e))
+            return False
+    """affichage de tous les paiements dans la base de données"""
+    def allPaiement(self,cursor):
+        try:
+            cursor.execute("select * from paiement")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+
+
+class FactureBackend:
+    # create table Facture(
+    # idFact varchar(5),
+    # dateFact date,
+    # idClient varchar(5),
+    # constraint pk_fact foreign key(idClient) References Client(idClient)
+    def __init__(self):
+        self.curseur=None
+    def __init__(self,idFact:str,dateFact:str,idClient:str):
+        self.idFact = idFact
+        self.dateFact = dateFact
+        self.idClient = idClient
+        self.curseur = None
+    """affichage de toutes les factures dans la base de données"""
+    def allFacture(self,cursor):
+        try:
+            cursor.execute("select * from facture")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+    def afficherUneFacture(self,cursor,factureId):
+        try:
+            cursor.execute("select * from facture where idFact=%s",(factureId,))
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
         
+
+class VenteBackend:
+    # codArt, idFact, quantite
+
+    def __init__(self):
+        self.curseur=None
+    def __init__(self,codArt:str,idFact:str,quantite:int):
+        self.codArt = codArt
+        self.idFact = idFact
+        self.quantite = quantite
+        self.curseur = None
+    # Récupérer les ventes dans la base de données
+    def allVente(self,cursor):
+        try:
+            cursor.execute("select * from vente")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+    # Recupérer les ventes d'une facture dans la base de données
+    def venteFacture(self,cursor,factureId):
+        try:
+            cursor.execute("select * from vente where idFact=%s",(factureId,))
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+    
