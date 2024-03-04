@@ -3,7 +3,8 @@ from tkinter.messagebox import showinfo
 from connexion import ArticleBackend
 from tkinter import ttk
 import webbrowser 
-
+from PaiementFrontend import PaiementFrontend
+from RapportFontend import RapportFrontend
 class ArticleFrontend:
     def __init__(self,curseur):
         self.curseur=curseur
@@ -25,10 +26,10 @@ class ArticleFrontend:
         self.gest_Clients=Button(self.MenuContainer,text='FACTURE', command=self.save)
         self.gest_Clients.place(x=20,y=200, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='PAIEMENT', command=self.save)
+        self.gest_Clients=Button(self.MenuContainer,text='PAIEMENT', command=self.ouvri_paiement)
         self.gest_Clients.place(x=20,y=260, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='RAPPORT', command=self.save)
+        self.gest_Clients=Button(self.MenuContainer,text='RAPPORT', command=self.ouvrir_rapport)
         self.gest_Clients.place(x=20,y=320, width=190,height=40)
 
 
@@ -164,3 +165,11 @@ class ArticleFrontend:
         pass
     def fenetre (self):
         return self.fen
+    def ouvri_paiement(self):
+        paiement = PaiementFrontend(self.curseur)
+        self.fen.destroy()
+        paiement.fenetre().mainloop()
+    def ouvrir_rapport(self):
+        rapport = RapportFrontend(self.curseur)
+        self.fen.destroy()
+        rapport.fenetre().mainloop()
