@@ -1,6 +1,5 @@
 import mysql.connector 
 from tkinter.messagebox import showerror,showinfo
-
 class Connexion:
     def __init__(self):
         self.db = mysql.connector.connect(
@@ -142,6 +141,49 @@ class FactBackend:
             showerror('BAC4 INFO', str(exp))
         
 
+class DetailsBackend:
+    def __init__(self,idfact,idArt,Quant):
+        self.idfact=idfact
+        self.idArt=idArt
+        self.Quant=Quant
+        self.curseur=None
+
+    def getdataArticle(self,curseur):
+        self.curseur=curseur
+        sql = 'SELECT article.codArt FROM article'
+        self.curseur.execute(sql)
+        resultat= self.curseur.fetchall()
+        return resultat
+    """ajourter un detail de la facture"""
+    def save(self,cursor):
+
+        try:
+            cursor.execute("insert into vente values(%s,%s,%s)",(self.idfact,self.idArt,self.Quant))
+
+            return True
+        except Exception as e:
+            showerror("Enregistrement",str(e))
+            return False 
+    def getDetails(self,cursor):
+        try:
+            self.curseur=cursor
+            sql = 'SELECT DISTINCT article.desiArt,article.prix,vente.quantite,article.codArt FROM article INNER JOIN vente INNER JOIN facture ON vente.idfact=%s AND vente.codArt=article.codArt'
+            val = (self.idfact,)
+            self.curseur.execute(sql,val)
+            resultat= self.curseur.fetchall()
+            return resultat
+        except Exception as exp :
+            showerror('Gest Fact', str(exp))
+    def UpdateData(self,cursor):
+        self.curseur=cursor
+        try:
+            sql = 'UPDATE vente SET  quantite=%s WHERE codArt = %s AND idfact=%s '
+            val = (self.Quant, self.idArt,self.idfact)
+            self.curseur.execute(sql,val)
+            showinfo('BAC4 INFO','Modification reçu')
+        except Exception as exp :
+            showerror('BAC4 INFO', str(exp))
+    
 class PaiementBackend:
     # create table Paiement(
     # datepaie date,

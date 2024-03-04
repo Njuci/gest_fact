@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.messagebox import showerror,showinfo
-from DetailsBackend import DetailsBackend
+from connexion import DetailsBackend
 from tkinter import ttk
 
 
@@ -19,6 +19,7 @@ class DetailsFrontend:
         self.fen.title("GESTION DE LA FACTURATION")
         self.fen.geometry("800x600")
         self.InfosFacture=InfosFacture
+        self.IdentifiantArticle=""
         #Creation du conteneur menu et ses elements
         self.MenuContainer=Frame(self.fen,height=800,width=230,bg='#51a596')
         self.MenuContainer.place(x=0,y=0)
@@ -52,13 +53,15 @@ class DetailsFrontend:
         self.form=Frame(self.HeaderContainer,height=320,width=450,bg='gray')
         self.form.place(x=0,y=0)
 
+
         #Les elements de conteneur action
         self.Actions=Frame(self.HeaderContainer,height=320,width=200,bg='gray')
         self.Actions.place(x=430,y=20)
+
         #les actions sur le formulaire
-        self.ajouter_btn= Button(self.Actions,bg='#51a596',text='Ajouter',fg='white')
+        self.ajouter_btn= Button(self.Actions,bg='#51a596',text='Ajouter',fg='white',command=self.save)
         self.ajouter_btn.place(x=0,y=20, width=120,height=40)
-        self.modifier_btn= Button(self.Actions,bg='#51a596',text='Modifier',fg='white')
+        self.modifier_btn= Button(self.Actions,bg='#51a596',text='Modifier',fg='white', command=self.Update)
         self.modifier_btn.place(x=0,y=70, width=120,height=40)
         self.Supprimer_btn= Button(self.Actions,bg='brown',text='Supprimer',fg='white')
         self.Supprimer_btn.place(x=0,y=120, width=120,height=40)
@@ -96,26 +99,71 @@ class DetailsFrontend:
         self.TabSection.place(x=0,y=330)
 
         #Creation du tableau
-        self.tableau=ttk.Treeview(self.TabSection, columns=('Nom','Quantite','Prix','PrixTotal'), show='headings')
+        self.tableau=ttk.Treeview(self.TabSection, columns=('IdArt','Nom','Quantite','Prix','PrixTotal'), show='headings')
+        self.tableau.heading('IdArt', text='Id Article')
         self.tableau.heading('Nom', text='Nom Article')
         self.tableau.heading('Quantite', text='Quant')
         self.tableau.heading('Prix', text='PU')
         self.tableau.heading('PrixTotal', text='PT')
 
+        self.tableau.column('IdArt',width=100,anchor='center')
+        self.tableau.column('Quantite',width=100,anchor='center')
+        self.tableau.column('Prix',width=100,anchor='center')
+        self.tableau.column('PrixTotal',width=100,anchor='center')
+
+
         #Ajouts des elements dans le tableau 
 
         self.curseur=Curseur
-        self.Datacombo=DetailsBackend(self.InfosFacture[0],'r',self.QuantEnt.get(),self.curseur)
-        Data =  self.Datacombo.getdataArticle()
+        self.DataDetails=DetailsBackend(self.InfosFacture[0],self.IdentifiantArticle,self.QuantEnt.get())
+        Data =  self.DataDetails.getdataArticle(self.curseur)
         option=[]
         for i, row in enumerate(Data):
              option.append(row[0])
         self.CodeArtEnt=ttk.Combobox(self.form,values=option)
         self.CodeArtEnt.place(x=150,y=150,width=250, height=30)
+        self.CodeArtEnt.bind("<<ComboboxSelected>>",self.selectCombo)
 
+        Data =  self.DataDetails.getDetails(self.curseur)
+        for i, row in enumerate(Data):
+            self.tableau.insert('','end',values=(row[3],row[0],row[2],row[1],row[1]*row[2]))
+
+        self.tableau.bind('<Double-Button-1>',self.GetValue)
         self.tableau.pack()
 
     # La fonction de reinitialisationde champ
-   
+    def Actualiser(self):
+        Data = self.DataDetails.getDetails(self.curseur)
+        for record in self.tableau.get_children():
+            self.tableau.delete(record)
+        for i, row in enumerate(Data):
+            self.tableau.insert('','end',values=(row[3],row[0],row[2],row[1],row[1]*row[2]))
+        self.tableau.pack()
+
+    def selectCombo (self,event):
+        self.IdentifiantArticle=self.CodeArtEnt.get()
+        
+    def ReseteInput(self):
+        self.QuantEnt.delete(0,END)
+
+    def GetValue(self,event):
+        self.ReseteInput()
+        row_id=self.tableau.selection()[0]
+        select = self.tableau.set(row_id)
+        self.QuantEnt.insert(0,select['Quantite'])
+        self.CodeArtEnt.insert(0,select['IdArt'])
+
+    def Update (self):
+        self.DataDetails=DetailsBackend(self.InfosFacture[0],self.IdentifiantArticle,self.QuantEnt.get())
+        self.DataDetails.UpdateData(self.curseur)
+        self.Actualiser()
+        self.ReseteInput()
+    def save(self):
+        self.selectCombo
+        self.DataDetails=DetailsBackend(self.InfosFacture[0],self.IdentifiantArticle,self.QuantEnt.get())
+        self.DataDetails.save(self.curseur)
+        self.Actualiser()
+        self.ReseteInput()
+ 
     def fenetre (self):
         return self.fen
