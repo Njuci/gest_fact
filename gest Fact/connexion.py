@@ -1,5 +1,5 @@
 import mysql.connector 
-from tkinter.messagebox import showerror
+from tkinter.messagebox import showerror,showinfo
 class Connexion:
     def __init__(self):
         self.db = mysql.connector.connect(
@@ -49,6 +49,7 @@ class ArticleBackend:
         self.designation = desi
         self.prix = prix
         self.curseur = None
+    
     """sauvegarde de l'article dans la base de données"""
     def save(self,cursor):
         try:
@@ -63,6 +64,7 @@ class ArticleBackend:
     def search(self,cursor):
         try:
             cursor.execute("select * from article where code=%s",(self.cod,))
+
             return cursor.fetchall()
         except Exception as e:
             showerror("Recherche",str(e))
@@ -72,7 +74,10 @@ class ArticleBackend:
     """modification d'un article dans la base de données"""
     def update(self,cursor,element):
         try:
-            cursor.execute("update article set desiArt=%s,prix=%s ; codArt=%s where codArt=%s and desiArt=%s and prix=%s ",(self.designation,self.prix,self.cod,element[0],element[1],element[2],))
+            cursor.execute("update article set desiArt=%s,prix=%s , codArt=%s where codArt=%s and desiArt=%s and prix=%s ",
+                           (self.designation,self.prix,self.cod,element[0],element[1],element[2]))
+            showinfo("Modification",f'Modification de {element[0]} Reussi ')
+
             return True
         except Exception as e:
             showerror("Modification",str(e))
@@ -81,6 +86,7 @@ class ArticleBackend:
     def delete(self,cursor):
         try:
             cursor.execute("delete from article where codArt=%s",(self.cod,))
+            showinfo("Suppression",f'Suppression de {self.code} Reussi ')
             return True
         except Exception as e:
             showerror("Suppression",str(e))

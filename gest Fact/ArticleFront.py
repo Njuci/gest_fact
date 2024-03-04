@@ -92,6 +92,7 @@ class ArticleFrontend:
         self.valeur_code_art=None
         self.valeur_designation=None
         self.valeur_prix=None
+        self.elemen_selected=None
 
         #Ajouts des elements dans le tableau
         self.afficher()
@@ -109,39 +110,46 @@ class ArticleFrontend:
     def get_table_selected_row(self,event):        
         self.clean_entry()
         row=self.tableau.selection()[0]
-        elemen_selected=self.tableau.set(row)
-        self.CodeEnt.insert(0,elemen_selected['Code'])
-        self.desiEnt.insert(0,elemen_selected['Designation'])
-        self.prixEnt.insert(0,elemen_selected['Prix'])
+        self.elemen_selected=self.tableau.set(row)
+        self.CodeEnt.insert(0,self.elemen_selected['Code'])
+        self.desiEnt.insert(0,self.elemen_selected['Designation'])
+        self.prixEnt.insert(0,self.elemen_selected['Prix'])
         self.get_entry()
-
     """modifier un article"""
     def modifier_article(self):
-        if self.valeur_code_art is None:
+        if self.valeur_code_art is  not None:
             self.get_entry()
         article=ArticleBackend(self.CodeEnt.get(),self.desiEnt.get(),self.prixEnt.get())
-        article.update(self.curseur,[self.valeur_code_art,self.valeur_designation,self.valeur_prix])
-        self.afficher()
-        self.tableau.pack()
-        
-        self.clean_entry()
+        print(self.CodeEnt.get(),self.desiEnt.get(),self.prixEnt.get())
+        print([self.elemen_selected['Code'],self.elemen_selected['Designation'],self.elemen_selected['Prix']])
+        print([self.valeur_code_art,self.valeur_designation,self.valeur_prix])
+        if article.update(self.curseur,[self.elemen_selected['Code'],self.elemen_selected['Designation'],self.elemen_selected['Prix']]):
+            self.afficher()
+
+        self.clean_entry()        
+        self.clear_selected_value()
     """supprimer un article"""
     def supprimer_article(self):
         article=ArticleBackend(self.CodeEnt.get(),self.desiEnt.get(),self.prixEnt.get())
         article.delete(self.curseur)
         self.afficher()
-        self.tableau.pack()
         self.clean_entry()
+        self.clear_selected_value()
     """afficher les articles"""
     def afficher(self):
         a=ArticleBackend("1","2",3)
         data=a.all(self.curseur)
-        for record in self.tableau.get_children():
-            self.tableau.delete(record)
-        for i, row in enumerate(data):
-            self.tableau.insert('','end',values=(row[0],row[1],row[2]))
-        self.tableau.bind('<Double-Button-1>',self.get_table_selected_row)
-        
+        if data is not None:
+            for record in self.tableau.get_children():
+                self.tableau.delete(record)
+            for i, row in enumerate(data):
+                self.tableau.insert('','end',values=(row[0],row[1],row[2]))
+            self.tableau.bind('<Double-Button-1>',self.get_table_selected_row)
+    def clear_selected_value(self):
+        self.valeur_code_art=None
+        self.valeur_designation=None
+        self.valeur_prix=None
+
     def clean_entry(self):
         self.CodeEnt.delete(0,END)
         self.desiEnt.delete(0,END)
