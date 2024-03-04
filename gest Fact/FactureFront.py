@@ -138,8 +138,9 @@ class FactureFrontend:
         self.Facture.UpdateData(self.curseur)
         self.ReseteInput()
         self.Actualiser()
+    """ajouter une facture"""
     def ajouter_fact(self):
-        fac=FactBackend(self.idFacEnt.get(),self.DateEnt.get(),self.RedEnt.get(),self.IdCliEnt)
+        fac=FactBackend(self.idFacEnt.get(),self.DateEnt.get(),self.RedEnt.get(),self.IdCliEnt.get())
         if fac.save(self.curseur):
             showinfo("Gest Fact","Facture Enrégistré")
         self.ReseteInput()
