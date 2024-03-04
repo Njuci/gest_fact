@@ -1,5 +1,6 @@
 import mysql.connector 
 from tkinter.messagebox import showerror,showinfo
+
 class Connexion:
     def __init__(self):
         self.db = mysql.connector.connect(
@@ -39,10 +40,6 @@ class Login_back:
 
 
 class ArticleBackend:
-    
-    def __init__(self):
-        self.curseur=None
-
 
     def __init__(self,cod:str,desi:str,prix:float):
         self.cod = cod
@@ -86,7 +83,7 @@ class ArticleBackend:
     def delete(self,cursor):
         try:
             cursor.execute("delete from article where codArt=%s",(self.cod,))
-            showinfo("Suppression",f'Suppression de {self.code} Reussi ')
+            showinfo("Suppression",f'Suppression de {self.cod} Reussi ')
             return True
         except Exception as e:
             showerror("Suppression",str(e))
@@ -101,6 +98,49 @@ class ArticleBackend:
         except Exception as e:
             showerror("Affichage",str(e))
             return False
+    def recuperer_codeArticle(self,cursor):
+        try:
+            cursor.execute("select codArt from article")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+
+class FactBackend:
+    def __init__(self,idFact,DateFac,Reduction,IdCli):
+        self.IdFac=idFact
+        self.Reduction=Reduction
+        self.DateFac=DateFac
+        self.IdCli=IdCli
+        self.curseur=None
+    def save(self,cursor):
+        try:
+            cursor.execute("insert into facture values(%s,%s,%s)",(self.IdFac,self.DateFac,self.Reduction,self.IdCli))
+
+            return True
+        except Exception as e:
+            showerror("Enregistrement",str(e))
+            return False
+        
+    def getData(self,cursor):
+        try:
+            self.curseur=cursor
+            sql = 'SELECT Facture.idFact,Facture.datfact,Facture.reduction,Facture.idcli, Customer.nomcli FROM Facture INNER JOIN Customer ON Facture.idcli=Customer.idcli'
+            self.curseur.execute(sql)
+            resultat= self.curseur.fetchall()
+            return resultat
+        except Exception as exp :
+            showerror('BAC4 INFO', str(exp))
+    def UpdateData(self,cursor):
+        self.curseur=cursor
+        try:
+            sql = 'UPDATE Facture SET  datfact=%s,reduction=%s,idcli=%s WHERE idFact = %s'
+            val = (self.DateFac,self.Reduction,self.IdCli, self.IdFac)
+            self.curseur.execute(sql,val)
+            showinfo('BAC4 INFO','Facture Modifié')
+        except Exception as exp :
+            showerror('BAC4 INFO', str(exp))
+        
 
 class PaiementBackend:
     # create table Paiement(

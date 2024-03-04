@@ -18,6 +18,7 @@ def create_pdf_with_table(file_name, data):
 
     doc.build([table])
 
+
 data = [
     ['Name', 'Age', 'Country'],
     ['John Doe', '30', 'USA'],

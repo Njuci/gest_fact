@@ -1,10 +1,13 @@
 from tkinter import *
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo,showerror
 from connexion import ArticleBackend
+from report import generate_pdf
+from FactureFront import FactureFrontend
 from tkinter import ttk
 import webbrowser 
-from PaiementFrontend import PaiementFrontend
-from RapportFontend import RapportFrontend
+import datetime
+#from PaiementFrontend import PaiementFrontend
+#from RapportFontend import RapportFrontend
 class ArticleFrontend:
     def __init__(self,curseur):
         self.curseur=curseur
@@ -23,13 +26,13 @@ class ArticleFrontend:
         self.gest_Clients=Button(self.MenuContainer,text='CLIENTS', command=self.save)
         self.gest_Clients.place(x=20,y=140, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='FACTURE', command=self.save)
+        self.gest_Clients=Button(self.MenuContainer,text='FACTURE', command=self.call_facture)
         self.gest_Clients.place(x=20,y=200, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='PAIEMENT', command=self.ouvri_paiement)
+        self.gest_Clients=Button(self.MenuContainer,text='PAIEMENT', command=self.save)
         self.gest_Clients.place(x=20,y=260, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='RAPPORT', command=self.ouvrir_rapport)
+        self.gest_Clients=Button(self.MenuContainer,text='RAPPORT', command=self.save)
         self.gest_Clients.place(x=20,y=320, width=190,height=40)
 
 
@@ -80,7 +83,7 @@ class ArticleFrontend:
         self.visualiser_btn= Button(self.PdfSection,bg='#51a596',text='Visualiser',fg='white', command=self.open_file)
         self.visualiser_btn.place(x=0,y=10, width=120,height=40)
 
-        self.generer_btn= Button(self.PdfSection,bg='#51a596',text='Generer',fg='white', command=self.save)
+        self.generer_btn= Button(self.PdfSection,bg='#51a596',text='Generer',fg='white', command=self.create_liste_pdf)
         self.generer_btn.place(x=150,y=10, width=120,height=40)
 
         self.TabSection=Frame(self.ContainerRight,height=550,width=580,bg='blue')
@@ -100,6 +103,15 @@ class ArticleFrontend:
 
 
         self.tableau.pack()
+    def create_liste_pdf(self):
+        date=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
+        file_name="pdf article liste_articles"+date+".pdf"
+        heading=['Code','Designation','Prix']
+        if generate_pdf(self.tableau,file_name,heading,"Liste des articles",[120,30]):
+            showinfo("Gest Fact","La liste est générée")
+        else:
+            showerror("Gest Fact","La liste est générée")
+
     def open_file(self):
         webbrowser.open("pdf")
     def get_entry(self):
@@ -163,9 +175,13 @@ class ArticleFrontend:
         self.tableau.pack()
     def save(self):
         pass
+    def call_facture(self):
+        facture=FactureFrontend(self.curseur)
+        facture.fenetre().mainloop()
+        self.fen.destroy()
     def fenetre (self):
         return self.fen
-    def ouvri_paiement(self):
+    """    def ouvri_paiement(self):
         paiement = PaiementFrontend(self.curseur)
         self.fen.destroy()
         paiement.fenetre().mainloop()
@@ -173,3 +189,5 @@ class ArticleFrontend:
         rapport = RapportFrontend(self.curseur)
         self.fen.destroy()
         rapport.fenetre().mainloop()
+        """
+# Path: gest%20Fact/connexion.py
