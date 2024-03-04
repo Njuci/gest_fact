@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
-from connexion import ArticleBackend
+from articlebackend import ArticleBackend
 from connexion import FactureBackend
-from connexion import PaiementBackend
+from PaiementBackend import PaiementBackend
 from connexion import VenteBackend
 from tkinter import ttk
 import webbrowser 

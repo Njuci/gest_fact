@@ -3,7 +3,10 @@ from tkinter.messagebox import showinfo
 import webbrowser 
 
 from RapportBackend import RapportBackend
-from rapport import genererRapportPaiement
+from rapport import genererRapportPaiement, genereRapportArticle,generateRapportFacture,generateRapportCustomer
+from articlebackend import ArticleBackend
+
+import os
 
 import datetime
 
@@ -66,10 +69,14 @@ class RapportFrontend:
     def save(self):
         pass
     def rapport_article(self):
-        
+        article= ArticleBackend("test","eye",10)
+        data = article.all(self.curseur)
+        genereRapportArticle(data)
+
       
-        # ouverture du fichier pdf
-        webbrowser.open_new(r'rapport_article.pdf')
+        # ouverture du fichier pdf avec tout les paths
+        webbrowser.open_new(r'rapport_articles.pdf')
+
     def rapport_vente(self):
         # creation du fichier pdf
         f=open('rapport_vente.pdf','w')
@@ -82,23 +89,25 @@ class RapportFrontend:
         data = rapportBac.afficherPaiementVenteArticle(self.curseur)
         genererRapportPaiement(data)
         # ouverture du fichier pdf
-        # webbrowser.open_new(r'rapport_paiement.pdf')
+        webbrowser.open_new(r'rapport_paiement.pdf')
     def rapport_facture(self):
-        # creation du fichier pdf
-        f=open('rapport_facture.pdf','w')
-        f.write('Rapport des factures')
-        f.close()
+        rapportback = RapportBackend()
+        data = rapportback.afficherFactureClient(self.curseur)
+        generateRapportFacture(data)
+
         # ouverture du fichier pdf
         webbrowser.open_new(r'rapport_facture.pdf')
     def rapport_client(self):
         rapportBac = RapportBackend()
-        data = rapportBac.afficherPaiementVenteArticle(self.curseur)
+        data = rapportBac.afficherClient(self.curseur)
+        generateRapportCustomer(data)
+
         # generate rapport
        
 
         
         # ouverture du fichier pdf
-        # webbrowser.open_new(r'rapport_client.pdf')
+        webbrowser.open_new(r'rapport_clients.pdf')
     
 
 

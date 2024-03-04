@@ -25,8 +25,8 @@ class RapportBackend:
                     # "idFact":i[3],
                     "datfact":i[4],
                     "reduction":i[5],
-                    "idcli":i[6],
-                    "codArt":i[7],
+                    # "idcli":i[6],
+                    # "codArt":i[7],
                     # "idfact":i[8], # "idfact" is the same as "idfact" in "paiement" table
                     "quantite":i[9],
                     # "codeArt":i[10],
@@ -37,7 +37,8 @@ class RapportBackend:
                     "adrcli":i[15],
                     "numtel":i[16],
                     
-                    "Montant restant": f"{i[2] - i[5]}"
+                    # montant restant (prix * quantite) - montant
+                    "montantRestant": (i[12] * i[9]) - i[2]
                 })
             # remove duplicated keys, and ids for customers and articles, and facture
             newdata  =[]
@@ -49,7 +50,25 @@ class RapportBackend:
         except Exception as e:
             showerror("Affichage",str(e))
             return False
-
+    def afficherFactureClient(self,cursor):
+        try:
+            cursor.execute("SELECT f.idFact, f.datfact, c.nomcli, c.adrcli, c.numtel FROM facture f, customer c WHERE f.idcli = c.idcli ORDER BY f.datfact")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+    def afficherClient(self,cursor):
+        try:
+            cursor.execute("select * from customer")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
+    # def afficherArticles(self,cursor):
+    #     try:
+    #         # select all articles in the database 
+    #         cursor.execute("select * from article")
+    #         cursor.fetchAll()
 
     #     create table Article(
     # codArt Varchar(4) PRIMARY KEY, 

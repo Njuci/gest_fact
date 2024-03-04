@@ -1,10 +1,11 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
-from connexion import ArticleBackend
+from articlebackend import ArticleBackend
 from tkinter import ttk
 import webbrowser 
 from PaiementFrontend import PaiementFrontend
 from RapportFontend import RapportFrontend
+from FactureFront import FactureFrontend
 class ArticleFrontend:
     def __init__(self,curseur):
         self.curseur=curseur
@@ -23,7 +24,7 @@ class ArticleFrontend:
         self.gest_Clients=Button(self.MenuContainer,text='CLIENTS', command=self.save)
         self.gest_Clients.place(x=20,y=140, width=190,height=40)
 
-        self.gest_Clients=Button(self.MenuContainer,text='FACTURE', command=self.save)
+        self.gest_Clients=Button(self.MenuContainer,text='FACTURE', command=self.open_facture)
         self.gest_Clients.place(x=20,y=200, width=190,height=40)
 
         self.gest_Clients=Button(self.MenuContainer,text='PAIEMENT', command=self.ouvri_paiement)
@@ -44,7 +45,7 @@ class ArticleFrontend:
 
         self.form=Frame(self.HeaderContainer,height=320,width=450,bg='gray')
         self.form.place(x=0,y=0)
-
+ 
         #Les elements de conteneur action
         self.Actions=Frame(self.HeaderContainer,height=320,width=200,bg='gray')
         self.Actions.place(x=430,y=20)
@@ -173,3 +174,7 @@ class ArticleFrontend:
         rapport = RapportFrontend(self.curseur)
         self.fen.destroy()
         rapport.fenetre().mainloop()
+    def open_facture(self):
+        facture = FactureFrontend(self.curseur)
+        self.fen.destroy()
+        facture.fenetre().mainloop()
