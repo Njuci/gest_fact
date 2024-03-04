@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
 import webbrowser 
-from rapport import create_pdf
+
+from RapportBackend import RapportBackend
+from rapport import genererRapportPaiement
 
 import datetime
 
@@ -64,7 +66,7 @@ class RapportFrontend:
     def save(self):
         pass
     def rapport_article(self):
-        create_pdf('rapport_article')
+        
       
         # ouverture du fichier pdf
         webbrowser.open_new(r'rapport_article.pdf')
@@ -76,12 +78,11 @@ class RapportFrontend:
         # ouverture du fichier pdf
         webbrowser.open_new(r'rapport_vente.pdf')
     def rapport_paiement(self):
-        # creation du fichier pdf
-        f=open('rapport_paiement.pdf','w')
-        f.write('Rapport des paiements')
-        f.close()
+        rapportBac = RapportBackend()
+        data = rapportBac.afficherPaiementVenteArticle(self.curseur)
+        genererRapportPaiement(data)
         # ouverture du fichier pdf
-        webbrowser.open_new(r'rapport_paiement.pdf')
+        # webbrowser.open_new(r'rapport_paiement.pdf')
     def rapport_facture(self):
         # creation du fichier pdf
         f=open('rapport_facture.pdf','w')
@@ -90,12 +91,14 @@ class RapportFrontend:
         # ouverture du fichier pdf
         webbrowser.open_new(r'rapport_facture.pdf')
     def rapport_client(self):
-        # creation du fichier pdf
-        f=open('rapport_client.pdf','w')
-        f.write('Rapport des clients')
-        f.close()
+        rapportBac = RapportBackend()
+        data = rapportBac.afficherPaiementVenteArticle(self.curseur)
+        # generate rapport
+       
+
+        
         # ouverture du fichier pdf
-        webbrowser.open_new(r'rapport_client.pdf')
+        # webbrowser.open_new(r'rapport_client.pdf')
     
 
 

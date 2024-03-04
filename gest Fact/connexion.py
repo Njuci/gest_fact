@@ -152,7 +152,15 @@ class PaiementBackend:
         except Exception as e:
             showerror("Affichage",str(e))
             return False
+    def getPaimentWithFactureAndProduct(self,cursor):
+        try:
+            cursor.execute("select * from paiement p, facture f, vente v where p.idFact = f.idFact and f.idFact = v.idFact")
+            return cursor.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
 
+    
 
 class FactureBackend:
     # create table Facture(
