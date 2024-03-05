@@ -1,5 +1,4 @@
-import mysql.connector
-
+from tkinter.messagebox import showerror
 class FactBackend:
     def __init__(self,idFact,DateFac,Reduction,IdCli,curseur):
         self.IdFac=idFact
@@ -20,4 +19,11 @@ class FactBackend:
             return resultat
         except Exception as exp :
             showerror('BAC4 INFO', str(exp))
+    def allFacture(self):
+        try:
+            self.curseur.execute("select * from Facture")
+            return self.curseur.fetchall()
+        except Exception as e:
+            showerror("Affichage",str(e))
+            return False
         

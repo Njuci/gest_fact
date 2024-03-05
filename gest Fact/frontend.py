@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.messagebox import showinfo
 from connexion import Login_back
 from ArticleFront import ArticleFrontend
+import os
 class Login_frontend:
     def __init__(self):
         
@@ -27,7 +28,8 @@ class Login_frontend:
     def fenetre(self):
         return self.fen
     def login(self):
-        print(self.username_text.get(),self.mdp_text.get())
+        
+        print(os.getcwd())
         user=Login_back(self.username_text.get(),self.mdp_text.get())
         if user.login():
             showinfo("Factiuration System","Connexion Reussi")

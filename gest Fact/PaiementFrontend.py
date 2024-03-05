@@ -1,14 +1,14 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
-from articlebackend import ArticleBackend
-from connexion import FactureBackend
-from PaiementBackend import PaiementBackend
-from connexion import VenteBackend
+
 from tkinter import ttk
 import webbrowser 
 from tkcalendar import DateEntry
 import datetime
-
+from PaiementBackend import PaiementBackend
+from FactureBackend import FactBackend
+from articlebackend import ArticleBackend
+from VenteBackend import VenteBackend
 
 class PaiementFrontend:
     def __init__(self,curseur):
@@ -158,8 +158,8 @@ class PaiementFrontend:
     # chercher liste des factures dans la base de données
     def get_facture(self):
         # fetch all the invoices from the database
-        facture=FactureBackend(idFact="1",dateFact="2021-05-12",idClient="1")
-        factures = facture.allFacture(self.curseur)
+        facture=FactBackend(idFact="1",DateFac="2021-05-12",IdCli="1",Reduction="2",curseur=self.curseur)
+        factures = facture.allFacture()
         print(factures)
         # return only the idFact from the list of invoices
         return [f[0] for f in factures]
